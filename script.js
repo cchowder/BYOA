@@ -3,23 +3,34 @@ class PomodoroTimer {
         this.timeLeft = 25 * 60; // 25 minutes in seconds
         this.timerId = null;
         this.isRunning = false;
+        this.isWorkMode = true;
         
         // DOM elements
-        this.timeDisplay = document.querySelector('.time-display');
-        this.startButton = document.getElementById('start');
-        this.pauseButton = document.getElementById('pause');
+        this.timeDisplay = document.getElementById('time-display');
+        this.minutesDisplay = this.timeDisplay.querySelector('.minutes');
+        this.secondsDisplay = this.timeDisplay.querySelector('.seconds');
         this.resetButton = document.getElementById('reset');
-        this.modeButtons = document.querySelectorAll('.mode');
+        this.modeToggle = document.getElementById('mode-toggle');
+        this.modeTexts = document.querySelectorAll('.mode-text');
+        this.workText = document.getElementById('work-text');
+        this.breakText = document.getElementById('break-text');
         
         // Event listeners
-        this.startButton.addEventListener('click', () => this.start());
-        this.pauseButton.addEventListener('click', () => this.pause());
+        this.timeDisplay.addEventListener('click', () => this.toggleTimer());
         this.resetButton.addEventListener('click', () => this.reset());
-        this.modeButtons.forEach(button => {
-            button.addEventListener('click', () => this.setMode(button));
-        });
+        this.modeToggle.addEventListener('click', () => this.toggleMode());
+        this.workText.addEventListener('click', () => this.setMode(true));
+        this.breakText.addEventListener('click', () => this.setMode(false));
         
         this.updateDisplay();
+    }
+    
+    toggleTimer() {
+        if (this.isRunning) {
+            this.pause();
+        } else {
+            this.start();
+        }
     }
     
     start() {
@@ -46,25 +57,39 @@ class PomodoroTimer {
     
     reset() {
         this.pause();
-        const activeMode = document.querySelector('.mode.active');
-        this.timeLeft = parseFloat(activeMode.dataset.time) * 60;
+        this.timeLeft = (this.isWorkMode ? 25 : 5) * 60;
         this.updateDisplay();
     }
     
-    setMode(button) {
-        this.modeButtons.forEach(btn => btn.classList.remove('active'));
-        button.classList.add('active');
-        this.reset();
+    setMode(isWorkMode) {
+        if (this.isWorkMode !== isWorkMode) {
+            this.isWorkMode = isWorkMode;
+            this.modeToggle.classList.toggle('active');
+            this.modeTexts.forEach(text => text.classList.toggle('active'));
+            this.reset();
+        }
+    }
+    
+    toggleMode() {
+        this.setMode(!this.isWorkMode);
     }
     
     updateDisplay() {
         const minutes = Math.floor(this.timeLeft / 60);
         const seconds = this.timeLeft % 60;
-        this.timeDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        this.minutesDisplay.textContent = minutes.toString().padStart(2, '0');
+        this.secondsDisplay.textContent = seconds.toString().padStart(2, '0');
+        
+        // Update the tab title with the timer countdown
+        if (this.isRunning) {
+            document.title = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+            document.title = 'Pomodoro Timer';
+        }
     }
     
     playAlarm() {
-        const audio = new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU');
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
         audio.play();
     }
 }

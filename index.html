@@ -8,19 +8,22 @@
 </head>
 <body>
     <div class="container">
-        <h1>Pomodoro Timer</h1>
-        <div class="timer">
-            <div class="time-display">25:00</div>
-            <div class="controls">
-                <button id="start">Start</button>
-                <button id="pause">Pause</button>
-                <button id="reset">Reset</button>
+        <div class="mode-selector">
+            <div class="mode-indicator">
+                <span class="mode-text active" id="work-text">Work</span>
+                <button id="mode-toggle"></button>
+                <span class="mode-text" id="break-text">Break Time</span>
             </div>
         </div>
-        <div class="mode-selector">
-            <button class="mode active" data-time="25">Pomodoro</button>
-            <button class="mode" data-time="1">Short Break</button>
-            <button class="mode" data-time="15">Long Break</button>
+        <div class="timer">
+            <div class="timer-row">
+                <div class="time-display" id="time-display">
+                    <span class="minutes">25</span> 
+                    <span class="colon">:</span>
+                    <span class="seconds">00</span>
+                </div>
+                <button id="reset">↻</button>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
